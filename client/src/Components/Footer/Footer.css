@@ -1,0 +1,90 @@
+.footer {
+  margin-right: auto;
+  margin-left: auto;
+  width: 1224px;
+  height: 250px;
+  margin-top: 44px;
+}
+.footer__above__left h2 {
+  height: 30px;
+  font-size: 15px;
+}
+.footer__above__left p {
+  font-size: 15px;
+  height: 30px;
+}
+.footer__above {
+  display: flex;
+  justify-content: space-between;
+}
+.footer__above__left__social__media {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+.instagram {
+  color: #757575;
+  width: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 35px;
+  padding: 7px 10px 20px 7px;
+  border: 1px solid #bcbcbc;
+  font-size: 20px;
+}
+.facebook {
+  color: #757575;
+  width: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 35px;
+  padding: 7px 10px 20px 7px;
+  border: 1px solid #bcbcbc;
+  font-size: 20px;
+}
+.twitter {
+  color: #757575;
+  width: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 35px;
+  padding: 7px 10px 20px 7px;
+  border: 1px solid #bcbcbc;
+  font-size: 20px;
+}
+.telegram {
+  color: #757575;
+  width: 35px;
+  cursor: pointer;
+  border-radius: 50%;
+  height: 35px;
+  padding: 7px 10px 20px 7px;
+  border: 1px solid #bcbcbc;
+  font-size: 20px;
+}
+.footer__above__middle h1 {
+  height: 32px;
+  font-size: 15px;
+}
+.footer__above__right__loqo {
+  display: flex;
+  gap: 10px;
+}
+.footer__above__right__loqo img {
+  width: 49px;
+  height: 43px;
+}
+.footer__above__right__loqo h1 {
+  font-size: 37px;
+  font-weight: bold;
+  color: #ed5c01;
+  margin-top: -5px;
+}
+.footer__above__right p {
+  font-size: 20px;
+}
+.footer__belove p {
+  margin-left: 320px;
+  margin-top: 50px;
+  font-size: 15px;
+}

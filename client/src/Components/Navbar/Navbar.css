@@ -1,0 +1,46 @@
+.p-5 {
+  margin-right: auto;
+  margin-left: auto;
+  width: 1224px;
+  
+}
+.activeLink {
+  font-weight: bold;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.loqo {
+  color: #ed5c01;
+  display: flex;
+}
+.loqo h1 {
+  font-size: 20px;
+  margin-top: 13px;
+  font-weight: 600;
+  margin-left: 6px;
+  font-family: "Montserrat", sans-serif;
+}
+.loqo img {
+  width: 30px;
+  margin-top: 14px;
+}
+.text-2xl {
+  font-size: 20px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  gap: 19px;
+  margin-top: 14px;
+}
+.navbar__loqo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  margin-top: 15px;
+}

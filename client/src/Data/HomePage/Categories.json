@@ -1,0 +1,32 @@
+[
+    {
+        "id":1,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       },
+       {
+        "id":2,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       },
+       {
+        "id":3,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       },
+       {
+        "id":4,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       }, {
+        "id":5,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       },
+       {
+        "id":6,
+        "image":"Assets/home/airpod.jpg",
+        "title":"AirPods Pro 2nd gen"
+       }
+       
+]

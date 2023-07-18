@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "image": "Assets/home/airpod.jpg",
+    "title": "AirPods Pro 2nd gen",
+    "value": "3000",
+    "winner":"Ad Soyad",
+    "date":"01.01.2023"
+  },
+  {
+    "id": 2,
+    "image": "Assets/home/airpod.jpg",
+    "title": "AirPods Pro 2nd gen",
+    "value": "3000",
+    "winner":"Ad Soyad",
+    "date":"01.01.2023"
+  },
+  {
+    "id": 3,
+    "image": "Assets/home/airpod.jpg",
+    "title": "AirPods Pro 2nd gen",
+    "value": "3000",
+    "winner":"Ad Soyad",
+    "date":"01.01.2023"
+  },  {
+    "id": 4,
+    "image": "Assets/home/airpod.jpg",
+    "title": "AirPods Pro 2nd gen",
+    "value": "3000",
+    "winner":"Ad Soyad",
+    "date":"01.01.2023"
+  },
+  {
+    "id": 5,
+    "image": "Assets/home/airpod.jpg",
+    "title": "AirPods Pro 2nd gen",
+    "value": "3000",
+    "winner":"Ad Soyad",
+    "date":"01.01.2023"
+  }
+]

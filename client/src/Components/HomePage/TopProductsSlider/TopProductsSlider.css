@@ -1,0 +1,172 @@
+.second__total {
+  margin-right: auto;
+  margin-left: auto;
+  width: 1224px;
+  height: 598px;
+}
+.second__section {
+  font-size: 35px;
+  font-weight: 600;
+  margin-top: 80px;
+}
+.second__section__cards {
+  flex-direction: row;
+  flex-wrap: wrap;
+  display: flex;
+  margin-top: 20px;
+  gap: 16px;
+}
+.home__top__card {
+  background-color: #f8f8f8 !important;
+}
+.second__section__cards__card {
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  height: 440px;
+  border-radius: 10px;
+  width: 294px;
+}
+.second__section__cards__card__img img {
+  width: 280px;
+  border-radius: 10px;
+}
+.second__section__cards__card__title {
+  font-size: 20px;
+  margin-left: 20px;
+  text-align: start;
+}
+.second__section__cards__card__price {
+  display: flex;
+  gap: 2px;
+  margin-top: 8px;
+  margin-left: 5px;
+}
+.second__section__cards__card__price__ticket {
+  font-size: 25px;
+  margin-left: 10px;
+}
+.second__section__cards__card__pricee {
+  font-size: 19px;
+  font-weight: 600;
+  margin-left: 5px;
+}
+.second__section__cards__card__percentage {
+  display: flex;
+  gap: 5px;
+  margin-left: 5px;
+}
+.second__section__cards__card__percentage__bar progress {
+  width: 220px;
+  height: 4px;
+  margin-top: 5px;
+  margin-left: 14px;
+}
+.second__section__cards__card__percentage__number {
+  font-size: 14px;
+  margin-top: 4.8px;
+  margin-left: 5px;
+}
+.second__section__cards__card__button {
+  display: flex;
+  gap: 14px;
+  border: 1px solid #ababab;
+  width: 40px;
+  height: 36px;
+  border-radius: 6px;
+  margin-top: 5px;
+  margin-left: 18px;
+  cursor: pointer;
+}
+.second__section__cards__card__button__2 button {
+  height: 35px;
+  border-radius: 6px;
+  width: 188px;
+  font-size: 14px;
+  color: white;
+  background-color: #ed5c01;
+  margin-left: 7px;
+}
+
+.second__section__cards__card__button__2__btn:hover {
+  background-color: white;
+  color: #ed5c01;
+  border: 1px solid #ed5c01;
+  transition: 0.5s;
+}
+.second__section__cards__card__button__1 {
+  font-size: 22px;
+  margin-top: 12px;
+  margin-left: 10px;
+  color: #ababab;
+}
+
+.second__section__button {
+  display: flex;
+  height: 45px;
+  border-radius: 10px;
+  width: 200px;
+  font-size: 15px;
+  color: #ed5c01;
+  border: 1px solid #ed5c01;
+  font-weight: bold;
+  margin-top: 50px;
+  margin-left: 500px;
+  cursor: pointer;
+}
+.second__section__cards__card__button__1__heart {
+  margin-top: -3px;
+  font-size: 18px;
+}
+.second__section__button__des {
+  margin-top: 10px;
+  margin-left: 17px;
+}
+.second__section__button:hover {
+  background-color: #ed5c01;
+  color: white;
+  transition: 0.5s;
+}
+.second__section__button__arrow {
+  margin-top: 13px;
+  margin-left: 8px;
+}
+#app {
+  height: 100%;
+}
+html,
+body {
+  position: relative;
+  height: 100%;
+}
+
+body {
+  background: #f8f8f8;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #f8f8f8;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
