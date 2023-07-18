@@ -6,13 +6,15 @@ module.exports = function (app) {
     res.status(200).send("Welcome 🙌 ");
   });
 
-  app.post("/api/verifyadmin", auth.isAdmin, (req, res) => {
-    res.status(200).send("Welcome Admin 🙌 ");
-  });
+  // app.post("/api/verifyadmin", auth.isAdmin, (req, res) => {
+  //   res.status(200).send("Welcome Admin 🙌 ");
+  // });
 
-  app.post("/api/admintoken", [auth.verifyToken, auth.isAdmin], (req, res) => {
-    res.status(200).send("Welcome Admin 🙌 ");
-  });
+  // app.post("/api/admintoken", [auth.verifyToken, auth.isAdmin], (req, res) => {
+  //   res.status(200).send("Welcome Admin 🙌 ");
+  // });
 
   app.post("/api/register", controller.register);
+  
+  app.post("/api/login", controller.login);
 };
