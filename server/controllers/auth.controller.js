@@ -30,7 +30,7 @@ exports.register = async (req, res) => {
     encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create token
-    const token = jwtService.createToken({ email });
+    const token = jwtService.create({ email });
 
     const user = await User.create({
       firstName,
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
       if (!passwordIsValid)
         return res.status(401).send({ message: "Invalid email or password!" });
 
-      const token = jwtService.createToken({ email });
+      const token = jwtService.create({ email });
 
       await User.findByIdAndUpdate(user._id, { token });
 
