@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
       return res.status(404).send({ message: "User role not found!" });
 
     //Encrypt user password
-    encryptedPassword = await bcrypt.hash(password, 10);
+    const encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create token
     const token = jwtService.create({ email });
@@ -54,7 +54,7 @@ exports.register = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("register:", err);
+    console.log("Auth/Register:", err);
     return res.status(500).send(err);
   }
 };
@@ -90,7 +90,7 @@ exports.login = async (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("login:", err);
+      console.log("Auth/Login:", err);
       return res.status(500).send({ message: err });
     });
 };

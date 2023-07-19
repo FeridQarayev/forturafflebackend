@@ -7,9 +7,9 @@ const jwtService = require("../services/token.service");
 
 exports.create = async (req, res) => {
   try {
-    let { firstName, lastName, email, password } = req.body;
+    let { firstName, lastName, email, password, roleId } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.registerValSchema);
+    const validate = mapping.mapping(req, userValidate.createValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -19,18 +19,15 @@ exports.create = async (req, res) => {
     if (existEmail)
       return res
         .status(409)
-        .send({ message: "User Already Exist! Please Login" });
+        .send({ message: "User Already Exist!" });
 
-    const userRoleId = await Role.findOne({ name: "user" }).select("_id");
+    const dbRoleId = await Role.findById(roleId).select("_id");
 
-    if (!userRoleId)
-      return res.status(404).send({ message: "User role not found!" });
+    if (!dbRoleId) return res.status(404).send({ message: "Role not found!" });
 
-    //Encrypt user password
-    encryptedPassword = await bcrypt.hash(password, 10);
+    const encryptedPassword = await bcrypt.hash(password, 10);
 
-    // Create token
-    const token = jwtService.createToken({ email });
+    const token = jwtService.create({ email });
 
     const user = await User.create({
       firstName,
@@ -38,14 +35,13 @@ exports.create = async (req, res) => {
       token,
       email: email,
       password: encryptedPassword,
-      role: userRoleId,
+      role: dbRoleId,
       createdAt: new Date(),
       isActive: false,
     });
 
-    // return new user
     return res.status(201).send({
-      message: "Successfully registered!",
+      message: "Successfully created!",
       data: {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -54,43 +50,63 @@ exports.create = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("register:", err);
+    console.log("User/Create:", err);
     return res.status(500).send(err);
   }
 };
 
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
+exports.update = async (req, res) => {
+  try {
+    let { id, firstName, lastName, email, password, roleId } = req.body;
 
-  const validate = mapping.mapping(req, userValidate.loginValSchema);
-  if (validate.valid)
-    return res.status(422).json({ message: validate.message });
+    const validate = mapping.mapping(req, userValidate.updateValSchema);
+    if (validate.valid)
+      return res.status(422).send({ message: validate.message });
 
-  await User.findOne({ email })
-    .select("_id firstName lastName email password token")
-    .then(async (user) => {
-      if (!user) return res.status(404).send({ message: "User Not found!" });
+    const dbUserId = await User.findById(id).select("_id");
+    if (!dbUserId) return res.status(404).send({ message: "User not found!" });
 
-      const passwordIsValid = bcrypt.compareSync(password, user.password);
-      if (!passwordIsValid)
-        return res.status(401).send({ message: "Invalid email or password!" });
+    if (email) {
+      email = email.toLowerCase();
+      const existEmail = await User.findOne({ email })?.select("email");
+      if (existEmail)
+        return res
+          .status(409)
+          .send({ message: "User Already Exist!" });
+    }
+    if (roleId) {
+      const dbRoleId = await Role.findById(roleId).select("_id");
 
-      const token = jwtService.createToken({ email });
+      if (!dbRoleId)
+        return res.status(404).send({ message: "Role not found!" });
+    }
+    let encryptedPassword = undefined;
+    if (password) {
+      encryptedPassword = await bcrypt.hash(password, 10);
+    }
 
-      await User.findByIdAndUpdate(user._id, { token });
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        email: email,
+        password: encryptedPassword,
+        role: roleId,
+      },
+      { new: true }
+    );
 
-      return res.status(200).send({
-        message: "Welcome!",
-        data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          token,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log("login:", err);
-      return res.status(500).send({ message: err });
+    return res.status(201).send({
+      message: "Successfully updated!",
+      data: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
     });
+  } catch (err) {
+    console.log("User/Update:", err);
+    return res.status(500).send(err);
+  }
 };
