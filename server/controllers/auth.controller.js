@@ -1,11 +1,9 @@
 const User = require("../models/user.model");
 const Role = require("../models/role.model");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const mapping = require("../mappings/validate.map");
 const userValidate = require("../validators/user.validator");
-
-require("dotenv").config();
+const jwtService = require("../services/token.service");
 
 exports.register = async (req, res) => {
   try {
@@ -32,9 +30,7 @@ exports.register = async (req, res) => {
     encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create token
-    const token = jwt.sign({ email }, process.env.TOKEN_KEY, {
-      expiresIn: "2h",
-    });
+    const token = jwtService.createToken({ email });
 
     const user = await User.create({
       firstName,
@@ -58,7 +54,7 @@ exports.register = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    console.log("register:", err);
     return res.status(500).send(err);
   }
 };
@@ -72,23 +68,29 @@ exports.login = async (req, res) => {
 
   await User.findOne({ email })
     .select("_id firstName lastName email password token")
-    .then((user) => {
+    .then(async (user) => {
       if (!user) return res.status(404).send({ message: "User Not found!" });
 
       const passwordIsValid = bcrypt.compareSync(password, user.password);
       if (!passwordIsValid)
         return res.status(401).send({ message: "Invalid email or password!" });
 
-      const token = jwt.sign({ email }, process.env.TOKEN_KEY, {
-        expiresIn: "2h",
-      });
-      user.token = token;
-      const updatedUser = User.findByIdAndUpdate(user._id, { token });
+      const token = jwtService.createToken({ email });
 
-      return res.status(200).send({ message: "Welcome!", data: updatedUser });
+      await User.findByIdAndUpdate(user._id, { token });
+
+      return res.status(200).send({
+        message: "Welcome!",
+        data: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          token,
+        },
+      });
     })
     .catch((err) => {
-      console.log("user:", err);
+      console.log("login:", err);
       return res.status(500).send({ message: err });
     });
 };
