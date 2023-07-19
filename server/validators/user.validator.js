@@ -12,6 +12,10 @@ exports.loginValSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+exports.getByIdValSchema = Joi.object({
+  id: Joi.joiObjectid().required(),
+});
+
 exports.createValSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
@@ -27,4 +31,8 @@ exports.updateValSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string(),
   roleId: Joi.joiObjectid(),
+});
+
+exports.deleteValSchema = Joi.object({
+  id: Joi.joiObjectid().required(),
 });

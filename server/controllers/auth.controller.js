@@ -67,6 +67,7 @@ exports.login = async (req, res) => {
     return res.status(422).json({ message: validate.message });
 
   await User.findOne({ email })
+    .where("isActive", false)
     .select("_id firstName lastName email password token")
     .then(async (user) => {
       if (!user) return res.status(404).send({ message: "User Not found!" });
