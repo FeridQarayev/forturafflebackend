@@ -1,8 +1,7 @@
 const Joi = require("../config/npm.config").joi;
 
 exports.registerValSchema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
+  fullName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
 });
@@ -17,8 +16,7 @@ exports.getByIdValSchema = Joi.object({
 });
 
 exports.createValSchema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
+  fullName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
   roleId: Joi.joiObjectid().required(),
@@ -26,8 +24,7 @@ exports.createValSchema = Joi.object({
 
 exports.updateValSchema = Joi.object({
   id: Joi.joiObjectid().required(),
-  firstName: Joi.string(),
-  lastName: Joi.string(),
+  fullName: Joi.string(),
   email: Joi.string().email(),
   password: Joi.string(),
   roleId: Joi.joiObjectid(),

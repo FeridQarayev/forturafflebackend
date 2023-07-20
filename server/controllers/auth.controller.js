@@ -7,7 +7,7 @@ const jwtService = require("../services/token.service");
 
 exports.register = async (req, res) => {
   try {
-    let { firstName, lastName, email, password } = req.body;
+    let { fullName, email, password } = req.body;
 
     const validate = mapping.mapping(req, userValidate.registerValSchema);
     if (validate.valid)
@@ -33,8 +33,7 @@ exports.register = async (req, res) => {
     const token = jwtService.create({ email });
 
     const user = await User.create({
-      firstName,
-      lastName,
+      fullName,
       token,
       email: email,
       password: encryptedPassword,
@@ -47,8 +46,7 @@ exports.register = async (req, res) => {
     return res.status(201).send({
       message: "Successfully registered!",
       data: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
         token: user.token,
       },
@@ -68,7 +66,7 @@ exports.login = async (req, res) => {
 
   await User.findOne({ email })
     .where("isActive", false)
-    .select("_id firstName lastName email password token")
+    .select("_id fullName email password token")
     .then(async (user) => {
       if (!user) return res.status(404).send({ message: "User Not found!" });
 
@@ -83,8 +81,7 @@ exports.login = async (req, res) => {
       return res.status(200).send({
         message: "Welcome!",
         data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
+          fullName: user.fullName,
           email: user.email,
           token,
         },

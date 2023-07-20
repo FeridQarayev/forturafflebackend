@@ -7,7 +7,7 @@ const jwtService = require("../services/token.service");
 
 exports.getAll = async (req, res) => {
   try {
-    const users = await User.find().select("_id firstName lastName email");
+    const users = await User.find().select("_id fullName email");
 
     return res.status(200).send({
       message: "Successfully!",
@@ -30,7 +30,7 @@ exports.getById = async (req, res) => {
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
-    const user = await User.findById(id).select("_id firstName lastName email");
+    const user = await User.findById(id).select("_id fullName email");
     if (!user) return res.status(404).send({ message: "User not found!" });
 
     return res.status(200).send({
@@ -45,7 +45,7 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    let { firstName, lastName, email, password, roleId } = req.body;
+    let { fullName, email, password, roleId } = req.body;
 
     const validate = mapping.mapping(req, userValidate.createValSchema);
     if (validate.valid)
@@ -66,8 +66,7 @@ exports.create = async (req, res) => {
     const token = jwtService.create({ email });
 
     const user = await User.create({
-      firstName,
-      lastName,
+      fullName,
       token,
       email: email,
       password: encryptedPassword,
@@ -79,8 +78,7 @@ exports.create = async (req, res) => {
     return res.status(201).send({
       message: "Successfully created!",
       data: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
         token: user.token,
       },
@@ -93,7 +91,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    let { id, firstName, lastName, email, password, roleId } = req.body;
+    let { id, fullName, email, password, roleId } = req.body;
 
     const validate = mapping.mapping(req, userValidate.updateValSchema);
     if (validate.valid)
@@ -124,20 +122,18 @@ exports.update = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       id,
       {
-        firstName,
-        lastName,
+        fullName,
         email: email,
         password: encryptedPassword,
         role: roleId,
       },
       { new: true }
-    ).select("firstName lastName email");
+    ).select("fullName email");
 
     return res.status(201).send({
       message: "Successfully updated!",
       data: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
         email: user.email,
       },
     });
@@ -159,7 +155,7 @@ exports.delete = async (req, res) => {
       isActive: true,
     })
       .where("isActive", false)
-      .select("firstName lastName email");
+      .select("fullName email");
     if (!dbUser) return res.status(404).send({ message: "User not found!" });
 
     return res.status(200).send({
