@@ -12,6 +12,7 @@ app.use(express.json(), cors(), express.urlencoded({ extended: true }));
 
 require("./routes/auth.route")(app);
 require("./routes/user.route")(app);
+require("./routes/contact.route")(app);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
