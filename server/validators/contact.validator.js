@@ -1,4 +1,4 @@
-const Joi = require("../config/npm.config").joi;
+const Joi = require("joi");
 const phonePattern = /^\+9940?(40|5[015]|60|7[07])\d{7}$/;
 
 exports.createValSchema = Joi.object({

@@ -1,4 +1,5 @@
-const Joi = require("../config/npm.config").joi;
+const Joi = require("joi");
+Joi.joiObjectid = require("joi-objectid")(Joi);
 
 exports.registerValSchema = Joi.object({
   fullName: Joi.string().required(),

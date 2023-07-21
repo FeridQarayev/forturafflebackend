@@ -1,4 +1,4 @@
-const Joi = require("../config/npm.config").joi;
+const Joi = require("joi");
 
 exports.getByIdValSchema = Joi.object({
   id: Joi.joiObjectid().required(),
