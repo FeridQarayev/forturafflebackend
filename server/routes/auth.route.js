@@ -15,15 +15,6 @@ module.exports = function (app) {
   //   res.status(200).send("Welcome Admin 🙌 ");
   // });
 
-  app.get("/api/mail", async (req, res) => {
-    const mail = await mailService.mailSendWithText(
-      "tu7he6n9s@code.edu.az",
-      "Wake up!",
-      "Exam coming :) ihihh"
-    );
-    res.status(200).send(mail);
-  });
-
   app.post("/api/register", controller.register);
 
   app.post("/api/login", controller.login);

@@ -14,6 +14,7 @@ require("./routes/auth.route")(app);
 require("./routes/user.route")(app);
 require("./routes/contact.route")(app);
 require("./routes/feedback.route")(app);
+require("./routes/mail.route")(app);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
