@@ -1,13 +1,13 @@
-const User = require("../models/user.model");
-const Role = require("../models/role.model");
 const bcrypt = require("bcryptjs");
 const mapping = require("../mappings/validate.map");
 const userValidate = require("../validators/user.validator");
-const jwtService = require("../services/token.service");
+const tokenService = require("../services/token.service");
+const userService = require("../services/user.service");
+const roleService = require("../services/role.service");
 
 exports.getAll = async (req, res) => {
   try {
-    const users = await User.find().select("_id fullName email");
+    const users = await userService.getAllAsync();
 
     return res.status(200).send({
       message: "Successfully!",
@@ -30,7 +30,7 @@ exports.getById = async (req, res) => {
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
-    const user = await User.findById(id).select("_id fullName email");
+    const user = await userService.getByIdAsync(id);
     if (!user) return res.status(404).send({ message: "User not found!" });
 
     return res.status(200).send({
@@ -51,26 +51,24 @@ exports.create = async (req, res) => {
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
-    email = email.toLowerCase();
-    const existEmail = await User.findOne({ email })?.select("email");
+    const existEmail = await userService.existEmailAsync(email);
 
     if (existEmail)
-      return res.status(409).send({ message: "User Already Exist!" });
+      return res.status(409).send({ message: "Email already exist!" });
 
-    const dbRoleId = await Role.findById(roleId).select("_id");
-
-    if (!dbRoleId) return res.status(404).send({ message: "Role not found!" });
+    const existRole = await roleService.existRoleAsync(roleId);
+    if (!existRole) return res.status(404).send({ message: "Role not found!" });
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const token = jwtService.create({ email });
+    const token = tokenService.create({ email });
 
-    const user = await User.create({
+    const user = await userService.createAsync({
       fullName,
       token,
       email: email,
       password: encryptedPassword,
-      role: dbRoleId,
+      role: roleId,
       createdAt: new Date(),
       isActive: false,
     });
@@ -97,21 +95,17 @@ exports.update = async (req, res) => {
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
-    const dbUserId = await User.findById(id)
-      .where("isActive", false)
-      .select("_id");
-    if (!dbUserId) return res.status(404).send({ message: "User not found!" });
+    const existUser = await userService.existUserAsync(id);
+    if (!existUser) return res.status(404).send({ message: "User not found!" });
 
     if (email) {
-      email = email.toLowerCase();
-      const existEmail = await User.findOne({ email })?.select("email");
+      const existEmail = await userService.existEmailAsync(email);
       if (existEmail)
-        return res.status(409).send({ message: "User Already Exist!" });
+        return res.status(409).send({ message: "Email already exist!" });
     }
     if (roleId) {
-      const dbRoleId = await Role.findById(roleId).select("_id");
-
-      if (!dbRoleId)
+      const existRole = await roleService.existRoleAsync(roleId);
+      if (!existRole)
         return res.status(404).send({ message: "Role not found!" });
     }
     let encryptedPassword = undefined;
@@ -119,16 +113,12 @@ exports.update = async (req, res) => {
       encryptedPassword = await bcrypt.hash(password, 10);
     }
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
-        fullName,
-        email: email,
-        password: encryptedPassword,
-        role: roleId,
-      },
-      { new: true }
-    ).select("fullName email");
+    const user = await userService.findByIdAndUpdateAsync(id, {
+      fullName,
+      email: email,
+      password: encryptedPassword,
+      role: roleId,
+    });
 
     return res.status(201).send({
       message: "Successfully updated!",
@@ -151,11 +141,9 @@ exports.delete = async (req, res) => {
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
-    const dbUser = await User.findByIdAndUpdate(id, {
+    const dbUser = await userService.findByIdAndUpdateAsync(id, {
       isActive: true,
-    })
-      .where("isActive", false)
-      .select("fullName email");
+    });
     if (!dbUser) return res.status(404).send({ message: "User not found!" });
 
     return res.status(200).send({

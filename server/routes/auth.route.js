@@ -1,6 +1,6 @@
 const controller = require("../controllers/auth.controller");
 const auth = require("../middlewares/auth.middleware");
-const smsService = require("../services/sms.service");
+// const smsService = require("../services/sms.service");
 
 module.exports = function (app) {
   app.post("/api/verify", auth.verifyToken, (req, res) => {
