@@ -4,7 +4,7 @@ const cors = require("cors");
 const express = require("express");
 
 const { STATUS, DEV_PORT, PROD_PORT } = process.env;
-const PORT = STATUS == "production" ? PROD_PORT : DEV_PORT;
+const PORT = (STATUS == "production" ? PROD_PORT : DEV_PORT) || 8080;
 
 const app = express();
 
