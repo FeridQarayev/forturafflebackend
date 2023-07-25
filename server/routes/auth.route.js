@@ -1,6 +1,6 @@
 const controller = require("../controllers/auth.controller");
 const auth = require("../middlewares/auth.middleware");
-const mailService = require("../services/mail.service");
+const smsService = require("../services/sms.service");
 
 module.exports = function (app) {
   app.post("/api/verify", auth.verifyToken, (req, res) => {
@@ -13,6 +13,13 @@ module.exports = function (app) {
 
   // app.post("/api/admintoken", [auth.verifyToken, auth.isAdmin], (req, res) => {
   //   res.status(200).send("Welcome Admin 🙌 ");
+  // });
+  // app.post("/api/send", async (req, res) => {
+  //   const result = await smsService.smsSend(
+  //     "+9940553725646",
+  //     "Salam sms testi"
+  //   );
+  //   res.status(200).send(result.message);
   // });
 
   app.post("/api/register", controller.register);
