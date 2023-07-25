@@ -4,6 +4,7 @@ const userValidate = require("../validators/user.validator");
 const tokenService = require("../services/token.service");
 const userService = require("../services/user.service");
 const roleService = require("../services/role.service");
+const bcryptSalt = process.env.BCRYPT_SALT;
 
 exports.register = async (req, res) => {
   try {
@@ -21,14 +22,14 @@ exports.register = async (req, res) => {
     if (!userRoleId)
       return res.status(404).send({ message: "User role not found!" });
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
+    const encryptedPassword = await bcrypt.hash(password, Number(bcryptSalt));
 
     const token = tokenService.create({ email });
 
     const user = await userService.createAsync({
       fullName,
       token,
-      email: email,
+      email,
       phoneNumber,
       password: encryptedPassword,
       role: userRoleId,
