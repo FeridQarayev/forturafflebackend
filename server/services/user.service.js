@@ -6,6 +6,13 @@ exports.getAllAsync = async () =>
 exports.getByIdAsync = async (id) =>
   await User.findById(id).select("_id fullName email");
 
+exports.getUserForLoginAsync = async (email) => {
+  email = email.toLowerCase();
+  return await User.findOne({ email })
+    .where("isActive", false)
+    .select("_id fullName email password token");
+};
+
 exports.existUserAsync = async (id) =>
   (await User.where("isActive", false).findOne({ _id: id }).count()) != 0
     ? true
