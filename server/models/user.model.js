@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   token: { type: String, default: null },
   isActive: { type: Boolean, default: false },
   createdAt: { type: Date, default: new Date() },
-  // phoneNumber: { type: String, required: true, validate: phonePattern },
+  phoneNumber: { type: String, required: true, validate: phonePattern },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Role",

@@ -45,7 +45,7 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    let { fullName, email, password, roleId } = req.body;
+    let { fullName, email, phoneNumber, password, roleId } = req.body;
 
     const validate = mapping.mapping(req, userValidate.createValSchema);
     if (validate.valid)
@@ -66,7 +66,8 @@ exports.create = async (req, res) => {
     const user = await userService.createAsync({
       fullName,
       token,
-      email: email,
+      email,
+      phoneNumber,
       password: encryptedPassword,
       role: roleId,
       createdAt: new Date(),
@@ -89,7 +90,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    let { id, fullName, email, password, roleId } = req.body;
+    let { id, fullName, email, phoneNumber, password, roleId } = req.body;
 
     const validate = mapping.mapping(req, userValidate.updateValSchema);
     if (validate.valid)
@@ -115,6 +116,7 @@ exports.update = async (req, res) => {
 
     const user = await userService.findByIdAndUpdateAsync(id, {
       fullName,
+      phoneNumber,
       email: email,
       password: encryptedPassword,
       role: roleId,
