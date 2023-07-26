@@ -73,13 +73,11 @@ exports.login = async (req, res) => {
 
     let token = null;
     if (user.token) {
-      let isVerify = false;
-      token = await tokenService.getTokenByIdAsync(user.token);
-      if (token) {
-        isVerify = await tokenService.verifyToken(token.token);
-        if (!isVerify)
-          token = await tokenService.updateAsync({ email }, user.token);
-      }
+      token = await tokenService.checkAndGenerateToken(
+        user.token,
+        { email },
+        user._id
+      );
     } else {
       token = await tokenService.createAsync({ email }, user._id);
     }
