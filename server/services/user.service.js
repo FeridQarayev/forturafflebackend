@@ -1,10 +1,37 @@
 const User = require("../models/user.model");
 
-exports.getAllAsync = async () =>
-  await User.find().select("_id fullName email");
+exports.getAllAsync = async () => {
+  const users = await User.find()
+    .select("_id fullName email")
+    .populate({
+      path: "token",
+      select: "-_id token",
+      match: { isReset: false },
+    });
+  const usersVM = users.map((user) => ({
+    _id: user._id,
+    fullname: user.fullName,
+    email: user.email,
+    token: user.token.token,
+  }));
+  return usersVM;
+};
 
-exports.getByIdAsync = async (id) =>
-  await User.findById(id).select("_id fullName email");
+exports.getByIdAsync = async (id) => {
+  let user = await User.findById(id)
+    .select("_id fullName email")
+    .populate({
+      path: "token",
+      select: "-_id token",
+      match: { isReset: false },
+    });
+  return {
+    _id: user._id,
+    fullname: user.fullName,
+    email: user.email,
+    token: user.token.token,
+  };
+};
 
 exports.getUserForLoginAsync = async (email) => {
   email = email.toLowerCase();

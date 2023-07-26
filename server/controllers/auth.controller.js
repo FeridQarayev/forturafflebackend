@@ -1,10 +1,9 @@
-const bcrypt = require("bcryptjs");
 const mapping = require("../mappings/validate.map");
 const userValidate = require("../validators/user.validator");
 const tokenService = require("../services/token.service");
 const userService = require("../services/user.service");
 const roleService = require("../services/role.service");
-const bcryptSalt = process.env.BCRYPT_SALT;
+const passwordService = require("../services/password.service");
 
 exports.register = async (req, res) => {
   try {
@@ -22,13 +21,10 @@ exports.register = async (req, res) => {
     if (!userRoleId)
       return res.status(404).send({ message: "User role not found!" });
 
-    const encryptedPassword = await bcrypt.hash(password, Number(bcryptSalt));
-
-    const token = tokenService.create({ email });
+    const encryptedPassword = await passwordService.hashingAsync(password);
 
     const user = await userService.createAsync({
       fullName,
-      token,
       email,
       phoneNumber,
       password: encryptedPassword,
@@ -36,13 +32,19 @@ exports.register = async (req, res) => {
       createdAt: new Date(),
       isActive: false,
     });
+    const token = await tokenService.createAsync({ email }, user._id);
 
+    await userService.findByIdAndUpdateAsync(user._id, {
+      $set: {
+        token: token._id,
+      },
+    });
     return res.status(201).send({
       message: "Successfully registered!",
       data: {
         fullName: user.fullName,
         email: user.email,
-        token: user.token,
+        token: token.token,
       },
     });
   } catch (err) {
@@ -62,20 +64,32 @@ exports.login = async (req, res) => {
     const user = await userService.getUserForLoginAsync(email);
     if (!user) return res.status(404).send({ message: "User Not found!" });
 
-    const passwordIsValid = bcrypt.compareSync(password, user.password);
+    const passwordIsValid = await passwordService.compareAsync(
+      password,
+      user.password
+    );
     if (!passwordIsValid)
       return res.status(401).send({ message: "Invalid email or password!" });
 
-    const token = tokenService.create({ email });
-
-    await userService.findByIdAndUpdateAsync(user._id, { token });
+    let token = null;
+    if (user.token) {
+      let isVerify = false;
+      token = await tokenService.getTokenByIdAsync(user.token);
+      if (token) {
+        isVerify = await tokenService.verifyToken(token.token);
+        if (!isVerify)
+          token = await tokenService.updateAsync({ email }, user.token);
+      }
+    } else {
+      token = await tokenService.createAsync({ email }, user._id);
+    }
 
     return res.status(200).send({
       message: "Welcome!",
       data: {
         fullName: user.fullName,
         email: user.email,
-        token,
+        token: token.token,
       },
     });
   } catch (err) {

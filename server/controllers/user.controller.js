@@ -1,9 +1,9 @@
-const bcrypt = require("bcryptjs");
 const mapping = require("../mappings/validate.map");
 const userValidate = require("../validators/user.validator");
 const tokenService = require("../services/token.service");
 const userService = require("../services/user.service");
 const roleService = require("../services/role.service");
+const passwordService = require("../services/password.service");
 
 exports.getAll = async (req, res) => {
   try {
@@ -59,13 +59,10 @@ exports.create = async (req, res) => {
     const existRole = await roleService.existRoleAsync(roleId);
     if (!existRole) return res.status(404).send({ message: "Role not found!" });
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-
-    const token = tokenService.create({ email });
+    const encryptedPassword = await passwordService.hashingAsync(password);
 
     const user = await userService.createAsync({
       fullName,
-      token,
       email,
       phoneNumber,
       password: encryptedPassword,
@@ -73,13 +70,20 @@ exports.create = async (req, res) => {
       createdAt: new Date(),
       isActive: false,
     });
+    const token = await tokenService.createAsync({ email }, user._id);
+
+    await userService.findByIdAndUpdateAsync(user._id, {
+      $set: {
+        token: token._id,
+      },
+    });
 
     return res.status(201).send({
       message: "Successfully created!",
       data: {
         fullName: user.fullName,
         email: user.email,
-        token: user.token,
+        token: token.token,
       },
     });
   } catch (err) {
@@ -111,7 +115,7 @@ exports.update = async (req, res) => {
     }
     let encryptedPassword = undefined;
     if (password) {
-      encryptedPassword = await bcrypt.hash(password, 10);
+      encryptedPassword = await passwordService.hashingAsync(password);
     }
 
     const user = await userService.findByIdAndUpdateAsync(id, {
