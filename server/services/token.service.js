@@ -7,13 +7,18 @@ const generateNewToken = (payloadObject) =>
     expiresIn: process.env.TOKEN_TIME,
   });
 
+existTokenAsync = async (token) =>
+  (await Token.where("isReset", false).findOne({ token }).count()) != 0
+    ? true
+    : false;
+
+getTokenByIdAsync = async (tokenId) => await Token.findById(tokenId);
+
 createAsync = async (payloadObject, userId) =>
   await Token.create({
     token: generateNewToken(payloadObject),
     user: userId,
   });
-
-getTokenByIdAsync = async (tokenId) => await Token.findById(tokenId);
 
 updateAsync = async (payloadObject, tokenId) =>
   await Token.findOneAndUpdate(
@@ -24,7 +29,7 @@ updateAsync = async (payloadObject, tokenId) =>
     { new: true }
   );
 
-verifyToken = async (token) =>
+verifyTokenAsync = async (token) =>
   jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
     if (err) {
       return false;
@@ -37,7 +42,7 @@ checkAndGenerateToken = async (tokenId, payloadObject, userId) => {
   let isVerify = false;
   token = await getTokenByIdAsync(tokenId);
   if (token) {
-    isVerify = await verifyToken(token.token);
+    isVerify = await verifyTokenAsync(token.token);
     if (!isVerify) token = await updateAsync(payloadObject, tokenId);
   } else token = await createAsync(payloadObject, userId);
 
@@ -48,7 +53,8 @@ const tokenService = {
   createAsync,
   getTokenByIdAsync,
   updateAsync,
-  verifyToken,
+  verifyTokenAsync,
+  existTokenAsync,
   checkAndGenerateToken,
 };
 module.exports = tokenService;

@@ -33,6 +33,20 @@ exports.getByIdAsync = async (id) => {
   };
 };
 
+exports.verifyAdminAsync = async (email) =>
+  (
+    await User.where("isActive", false)
+      .findOne({ email })
+      .select("-_id role")
+      .populate({
+        path: "role",
+        select: "-_id name",
+        match: { name: "admin" },
+      })
+  ).role != null
+    ? true
+    : false;
+
 exports.getUserForLoginAsync = async (email) => {
   email = email.toLowerCase();
   return await User.findOne({ email })

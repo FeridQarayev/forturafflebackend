@@ -38,3 +38,7 @@ exports.updateValSchema = Joi.object({
 exports.deleteValSchema = Joi.object({
   id: Joi.joiObjectid().required(),
 });
+
+exports.isAdminValSchema = Joi.object({
+  email: Joi.string().email().required(),
+});

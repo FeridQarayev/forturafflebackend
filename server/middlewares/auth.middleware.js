@@ -1,74 +1,36 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user.model");
-const Role = require("../models/role.model");
-var ObjectId = require("mongoose").Types.ObjectId;
-require("dotenv").config();
+const tokenService = require("../services/token.service");
+const userService = require("../services/user.service");
+const mapping = require("../mappings/validate.map");
+const userValidate = require("../validators/user.validator");
 
-const config = process.env;
-
-const verifyToken = (req, res, next) => {
+exports.verifyToken = async (req, res, next) => {
   const token =
     req.body.token || req.query.token || req.headers["x-access-token"];
 
-  if (!token) {
+  if (!token)
     return res
       .status(403)
       .send({ message: "A token is required for authentication" });
-  }
 
-  jwt.verify(token, config.TOKEN_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
-    }
-    req.user = decoded.id;
-    next();
-  });
+  const isVerify = await tokenService.verifyTokenAsync(token);
+  if (!isVerify) return res.status(401).send({ message: "Unauthorized!" });
+
+  const existToken = await tokenService.existTokenAsync(token);
+  if (!existToken) return res.status(404).send({ message: "Token not found!" });
+
+  next();
 };
 
-isAdmin = async (req, res, next) => {
-  const { userId } = req.body;
+exports.isAdmin = async (req, res, next) => {
+  const { email } = req.body;
 
-  if (!userId) {
-    return res.status(400).send({ message: "User Id is required!" });
-  }
+  const validate = mapping.mapping(req, userValidate.isAdminValSchema);
+  if (validate.valid)
+    return res.status(422).send({ message: validate.message });
 
-  if (!ObjectId.isValid(userId)) {
-    return res.status(422).send({ message: "Validation Error!" });
-  }
+  const verifyAdmin = await userService.verifyAdminAsync(email);
+  if (!verifyAdmin)
+    return res.status(403).send({ message: "Require Admin Role!" });
 
-  const oldUser = await User.findById(userId);
-  if (!oldUser) return res.status(404).send({ message: "User not found!" });
-
-  User.findById(userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-    Role.findOne(
-      {
-        _id: { $in: user.role },
-      },
-      (err, role) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        if (role.name === "admin") {
-          next();
-          return;
-        }
-
-        res.status(403).send({ message: "Require Admin Role!" });
-        return;
-      }
-    );
-  });
+  next();
 };
-
-const authMiddleware = {
-  verifyToken,
-  isAdmin,
-};
-
-module.exports = authMiddleware;
