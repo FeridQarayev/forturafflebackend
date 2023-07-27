@@ -42,3 +42,18 @@ exports.deleteValSchema = Joi.object({
 exports.isAdminValSchema = Joi.object({
   adminEmail: Joi.string().email().required(),
 });
+
+exports.resetPasswordValSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+exports.confirmResetPasswordValSchema = Joi.object({
+  email: Joi.string().email().required(),
+  code: Joi.string().required(),
+});
+
+exports.changePasswordValSchema = Joi.object({
+  code: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});

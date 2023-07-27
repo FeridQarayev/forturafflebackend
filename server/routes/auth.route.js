@@ -26,6 +26,12 @@ module.exports = function (app) {
   //   res.status(200).send(result.message);
   // });
 
+  app.post("/api/reset-password", controller.resetPassword);
+
+  app.post("/api/confirm-reset-password", controller.confirmResetPassword);
+
+  app.put("/api/change-password", controller.changePassword);
+
   app.post("/api/register", controller.register);
 
   app.post("/api/login", controller.login);

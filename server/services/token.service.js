@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const Token = require("../models/token.model");
 require("dotenv").config();
 
+const maxResetTokenMinute = 15;
+
 const generateNewToken = (payloadObject) =>
   jwt.sign(payloadObject, process.env.TOKEN_KEY, {
     expiresIn: process.env.TOKEN_TIME,
@@ -19,6 +21,40 @@ const createAsync = async (payloadObject, userId) =>
     token: generateNewToken(payloadObject),
     user: userId,
   });
+
+const createResetAsync = async (userId, encryptedCode) => {
+  const code = await Token.findOne({
+    user: userId,
+    isReset: true,
+  }).select("_id token modifiedAt");
+  if (code) {
+    return (
+      await Token.findByIdAndUpdate(
+        code._id,
+        { token: encryptedCode, modifiedAt: new Date() },
+        { new: true }
+      )
+    )?.token;
+  } else {
+    return (
+      await Token.create({
+        token: encryptedCode,
+        user: userId,
+        isReset: true,
+      })
+    )?.token;
+  }
+};
+
+const verifyResetCodeAsync = async (userId, code) =>
+  await Token.findOne({ user: userId, token: code, isReset: true }).select(
+    "_id token modifiedAt"
+  );
+
+const isExpired = (date) => {
+  const minute = Math.floor(Math.abs(new Date() - date) / 1000 / 60);
+  return minute <= maxResetTokenMinute ? true : false;
+};
 
 const updateAsync = async (payloadObject, tokenId) =>
   await Token.findOneAndUpdate(
@@ -74,13 +110,20 @@ const isAdminToken = async (token) =>
     ? true
     : false;
 
+const removeTokenAsync = async (tokenId) =>
+  await Token.findByIdAndDelete(tokenId);
+
 const tokenService = {
-  createAsync,
-  getTokenByIdAsync,
-  updateAsync,
-  verifyTokenAsync,
-  existTokenAsync,
   checkAndGenerateToken,
+  verifyResetCodeAsync,
+  getTokenByIdAsync,
+  removeTokenAsync,
+  verifyTokenAsync,
+  createResetAsync,
+  existTokenAsync,
   isAdminToken,
+  createAsync,
+  updateAsync,
+  isExpired,
 };
 module.exports = tokenService;

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const tokenSchema = new mongoose.Schema({
   token: { type: String, required: true, unique: true },
   isReset: { type: Boolean, default: false },
-  createdAt: { type: Date, default: new Date() },
+  modifiedAt: { type: Date, default: new Date() },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

@@ -47,7 +47,7 @@ exports.verifyAdminAsync = async (email) =>
     ? true
     : false;
 
-exports.getUserForLoginAsync = async (email) => {
+exports.getByEmailAsync = async (email) => {
   email = email.toLowerCase();
   return await User.findOne({ email })
     .where("isActive", false)
