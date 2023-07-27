@@ -11,6 +11,10 @@ module.exports = function (app) {
     res.status(200).send("Welcome Admin 🙌 ");
   });
 
+  app.post("/api/verifyadmintoken", auth.isAdminWithToken, (req, res) => {
+    res.status(200).send("Welcome Admin 🙌 ");
+  });
+
   // app.post("/api/admintoken", [auth.verifyToken, auth.isAdmin], (req, res) => {
   //   res.status(200).send("Welcome Admin 🙌 ");
   // });

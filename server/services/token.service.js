@@ -7,20 +7,20 @@ const generateNewToken = (payloadObject) =>
     expiresIn: process.env.TOKEN_TIME,
   });
 
-existTokenAsync = async (token) =>
+const existTokenAsync = async (token) =>
   (await Token.where("isReset", false).findOne({ token }).count()) != 0
     ? true
     : false;
 
-getTokenByIdAsync = async (tokenId) => await Token.findById(tokenId);
+const getTokenByIdAsync = async (tokenId) => await Token.findById(tokenId);
 
-createAsync = async (payloadObject, userId) =>
+const createAsync = async (payloadObject, userId) =>
   await Token.create({
     token: generateNewToken(payloadObject),
     user: userId,
   });
 
-updateAsync = async (payloadObject, tokenId) =>
+const updateAsync = async (payloadObject, tokenId) =>
   await Token.findOneAndUpdate(
     { _id: tokenId, isReset: false },
     {
@@ -29,7 +29,7 @@ updateAsync = async (payloadObject, tokenId) =>
     { new: true }
   );
 
-verifyTokenAsync = async (token) =>
+const verifyTokenAsync = async (token) =>
   jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
     if (err) {
       return false;
@@ -37,7 +37,7 @@ verifyTokenAsync = async (token) =>
     return true;
   });
 
-checkAndGenerateToken = async (tokenId, payloadObject, userId) => {
+const checkAndGenerateToken = async (tokenId, payloadObject, userId) => {
   let token = null;
   let isVerify = false;
   let isNew = false;
@@ -53,6 +53,27 @@ checkAndGenerateToken = async (tokenId, payloadObject, userId) => {
   return { token, isNew };
 };
 
+const isAdminToken = async (token) =>
+  (
+    await Token.where("isReset", false)
+      .findOne({ token })
+      .select("-_id user")
+      .populate({
+        path: "user",
+        model: "User",
+        match: { isActive: false },
+        select: "-_id role",
+        populate: {
+          path: "role",
+          model: "Role",
+          match: { name: "admin" },
+          select: "-_id name",
+        },
+      })
+  )?.user?.role != null
+    ? true
+    : false;
+
 const tokenService = {
   createAsync,
   getTokenByIdAsync,
@@ -60,5 +81,6 @@ const tokenService = {
   verifyTokenAsync,
   existTokenAsync,
   checkAndGenerateToken,
+  isAdminToken,
 };
 module.exports = tokenService;
