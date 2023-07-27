@@ -7,7 +7,10 @@ exports.sendText = async (req, res) => {
   try {
     let { email, subject, text } = req.body;
 
-    const validate = mapping.mapping(req, mailValidate.sendValSchema);
+    const validate = mapping(
+      { email, subject, text },
+      mailValidate.sendValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -35,7 +38,10 @@ exports.sendHTML = async (req, res) => {
   try {
     let { email, subject, text } = req.body;
 
-    const validate = mapping.mapping(req, mailValidate.sendValSchema);
+    const validate = mapping(
+      { email, subject, text },
+      mailValidate.sendValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 

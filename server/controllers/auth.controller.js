@@ -9,7 +9,10 @@ exports.register = async (req, res) => {
   try {
     let { fullName, email, phoneNumber, password } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.registerValSchema);
+    const validate = mapping(
+      { fullName, email, phoneNumber, password },
+      userValidate.registerValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -57,7 +60,7 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.loginValSchema);
+    const validate = mapping({ email, password }, userValidate.loginValSchema);
     if (validate.valid)
       return res.status(422).json({ message: validate.message });
 
@@ -73,13 +76,25 @@ exports.login = async (req, res) => {
 
     let token = null;
     if (user.token) {
-      token = await tokenService.checkAndGenerateToken(
+      const result = await tokenService.checkAndGenerateToken(
         user.token,
         { email },
         user._id
       );
+      token = result.token;
+      if (result.isNew)
+        await userService.findByIdAndUpdateAsync(user._id, {
+          $set: {
+            token: token._id,
+          },
+        });
     } else {
       token = await tokenService.createAsync({ email }, user._id);
+      await userService.findByIdAndUpdateAsync(user._id, {
+        $set: {
+          token: token._id,
+        },
+      });
     }
 
     return res.status(200).send({

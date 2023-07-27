@@ -22,7 +22,10 @@ exports.create = async (req, res) => {
   try {
     let { number, email, instagram, facebook, twitter, threads } = req.body;
 
-    const validate = mapping.mapping(req, contactValidate.createValSchema);
+    const validate = mapping(
+      { number, email, instagram, facebook, twitter, threads },
+      contactValidate.createValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 

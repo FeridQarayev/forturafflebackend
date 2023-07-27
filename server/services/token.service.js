@@ -40,13 +40,17 @@ verifyTokenAsync = async (token) =>
 checkAndGenerateToken = async (tokenId, payloadObject, userId) => {
   let token = null;
   let isVerify = false;
+  let isNew = false;
   token = await getTokenByIdAsync(tokenId);
   if (token) {
     isVerify = await verifyTokenAsync(token.token);
     if (!isVerify) token = await updateAsync(payloadObject, tokenId);
-  } else token = await createAsync(payloadObject, userId);
+  } else {
+    token = await createAsync(payloadObject, userId);
+    isNew = true;
+  }
 
-  return token;
+  return { token, isNew };
 };
 
 const tokenService = {

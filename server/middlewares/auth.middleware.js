@@ -22,13 +22,16 @@ exports.verifyToken = async (req, res, next) => {
 };
 
 exports.isAdmin = async (req, res, next) => {
-  const { email } = req.body;
+  const { adminEmail } = req.body;
 
-  const validate = mapping.mapping(req, userValidate.isAdminValSchema);
+  const validate = mapping(
+    { adminEmail },
+    userValidate.isAdminValSchema
+  );
   if (validate.valid)
     return res.status(422).send({ message: validate.message });
 
-  const verifyAdmin = await userService.verifyAdminAsync(email);
+  const verifyAdmin = await userService.verifyAdminAsync(adminEmail);
   if (!verifyAdmin)
     return res.status(403).send({ message: "Require Admin Role!" });
 

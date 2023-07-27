@@ -23,10 +23,7 @@ exports.getById = async (req, res) => {
   try {
     const { id } = req.query;
 
-    const validate = mapping.mappingForReqQuery(
-      req,
-      userValidate.getByIdValSchema
-    );
+    const validate = mapping({ id }, userValidate.getByIdValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -47,7 +44,10 @@ exports.create = async (req, res) => {
   try {
     let { fullName, email, phoneNumber, password, roleId } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.createValSchema);
+    const validate = mapping(
+      { fullName, email, phoneNumber, password, roleId },
+      userValidate.createValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -96,7 +96,10 @@ exports.update = async (req, res) => {
   try {
     let { id, fullName, email, phoneNumber, password, roleId } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.updateValSchema);
+    const validate = mapping(
+      { id, fullName, email, phoneNumber, password, roleId },
+      userValidate.updateValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -143,7 +146,7 @@ exports.delete = async (req, res) => {
   try {
     const { id } = req.body;
 
-    const validate = mapping.mapping(req, userValidate.deleteValSchema);
+    const validate = mapping({ id }, userValidate.deleteValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 

@@ -40,5 +40,5 @@ exports.deleteValSchema = Joi.object({
 });
 
 exports.isAdminValSchema = Joi.object({
-  email: Joi.string().email().required(),
+  adminEmail: Joi.string().email().required(),
 });

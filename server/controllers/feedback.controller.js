@@ -23,10 +23,7 @@ exports.getById = async (req, res) => {
   try {
     const { id } = req.query;
 
-    const validate = mapping.mappingForReqQuery(
-      req,
-      feedbackValidate.getByIdValSchema
-    );
+    const validate = mapping({ id }, feedbackValidate.getByIdValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -50,7 +47,10 @@ exports.create = async (req, res) => {
   try {
     const { message, userId } = req.body;
 
-    const validate = mapping.mapping(req, feedbackValidate.createValSchema);
+    const validate = mapping(
+      { message, userId },
+      feedbackValidate.createValSchema
+    );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -80,7 +80,7 @@ exports.delete = async (req, res) => {
   try {
     const { id } = req.body;
 
-    const validate = mapping.mapping(req, feedbackValidate.deleteValSchema);
+    const validate = mapping({ id }, feedbackValidate.deleteValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 

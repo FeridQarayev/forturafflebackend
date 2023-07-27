@@ -43,7 +43,7 @@ exports.verifyAdminAsync = async (email) =>
         select: "-_id name",
         match: { name: "admin" },
       })
-  ).role != null
+  )?.role != null
     ? true
     : false;
 
