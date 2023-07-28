@@ -61,6 +61,7 @@ const updateAsync = async (payloadObject, tokenId) =>
     { _id: tokenId, isReset: false },
     {
       token: generateNewToken(payloadObject),
+      modifiedAt: new Date(),
     },
     { new: true }
   );
