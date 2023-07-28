@@ -3,6 +3,11 @@ const Product = require("../models/product.model");
 exports.getAllAsync = async () =>
   await Product.find().select("_id name startDate endDate ticketCount");
 
+exports.getByIdAsync = async (id) =>
+  await Product.findById(id).select(
+    "_id name startDate endDate ticketCount category"
+  );
+
 exports.existAsync = async (id) =>
   (await Product.where("isActive", false).findById(id)?.count()) != 0
     ? true

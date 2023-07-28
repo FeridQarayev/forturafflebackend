@@ -4,7 +4,7 @@ const controller = require("../controllers/category.controller");
 module.exports = function (app) {
   app.get("/api/category/getAll", controller.getAll);
 
-  //   app.get("/api/category/getById", controller.getById);
+  app.get("/api/category/getById", controller.getById);
 
   app.post("/api/category/create", controller.create);
 

@@ -1,5 +1,9 @@
 const Joi = require("joi");
 
+exports.getByIdValSchema = Joi.object({
+  id: Joi.joiObjectid().required(),
+});
+
 exports.createValSchema = Joi.object({
   name: Joi.string().required(),
 });

@@ -16,6 +16,28 @@ exports.getAll = async (req, res) => {
   }
 };
 
+exports.getById = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    const validate = mapping({ id }, categoryValidate.getByIdValSchema);
+    if (validate.valid)
+      return res.status(422).send({ message: validate.message });
+
+    const category = await categoryService.getByIdAsync(id);
+    if (!category)
+      return res.status(404).send({ message: "Category not found!" });
+
+    return res.status(200).send({
+      message: "Successfully!",
+      data: category,
+    });
+  } catch (err) {
+    console.log("Category/GetById:", err);
+    return res.status(500).send(err);
+  }
+};
+
 exports.create = async (req, res) => {
   try {
     const { name } = req.body;
