@@ -2,6 +2,8 @@ const mapping = require("../mappings/validate.map");
 const productValidate = require("../validators/product.validator");
 const productService = require("../services/product.service");
 const categoryService = require("../services/category.service");
+const productImageService = require("../services/product.image.service");
+const imageService = require("../services/image.service");
 
 exports.getAll = async (req, res) => {
   try {
@@ -21,7 +23,7 @@ exports.getById = async (req, res) => {
   try {
     const { id } = req.query;
 
-    const validate = mapping({ id }, productService.getByIdValSchema);
+    const validate = mapping({ id }, productValidate.getByIdValSchema);
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
@@ -39,7 +41,8 @@ exports.getById = async (req, res) => {
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
+  const { files } = req;
   try {
     const {
       name,
@@ -66,17 +69,31 @@ exports.create = async (req, res) => {
     };
 
     const validate = mapping(reqObject, productValidate.createValSchema);
-    if (validate.valid)
+    if (validate.valid) {
+      imageService.deleteFiles(files);
       return res.status(422).send({ message: validate.message });
+    }
 
     const category = await categoryService.getByIdAsync(categoryId);
-    if (!category?.isActive)
+    if (!category) {
+      imageService.deleteFiles(files);
       return res.status(404).send({ message: "Category not found!" });
+    }
+
+    const images = [];
+
+    req.files.forEach((file) =>
+      images.push({ path: file.filename, isMain: false })
+    );
+    images[0].isMain = true;
+
+    const productImages = await productImageService.createManyAsync(images);
 
     const product = await productService.createAsync({
       ...reqObject,
       categoryId: undefined,
       category: categoryId,
+      productImages: productImages.map((productImage) => productImage._id),
     });
 
     await categoryService.updateAsync(categoryId, {
@@ -91,6 +108,7 @@ exports.create = async (req, res) => {
     });
   } catch (err) {
     console.log("Product/Create:", err);
+    imageService.deleteFiles(files);
     return res.status(500).send(err);
   }
 };

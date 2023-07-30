@@ -12,6 +12,8 @@ app.use(express.json(), cors(), express.urlencoded({ extended: true }));
 
 require("./routes/auth.route")(app);
 require("./routes/user.route")(app);
+require("./routes/category.route")(app);
+require("./routes/product.route")(app);
 require("./routes/contact.route")(app);
 require("./routes/feedback.route")(app);
 require("./routes/mail.route")(app);
