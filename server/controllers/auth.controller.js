@@ -5,18 +5,20 @@ const userService = require("../services/user.service");
 const roleService = require("../services/role.service");
 const passwordService = require("../services/password.service");
 const mailService = require("../services/mail.service");
+const subscribedService = require("../services/subscribed.service");
 
 exports.register = async (req, res) => {
   try {
-    let { fullName, email, phoneNumber, password } = req.body;
+    let { fullName, email, isSubscribed, phoneNumber, password } = req.body;
 
     const validate = mapping(
-      { fullName, email, phoneNumber, password },
+      { fullName, email, isSubscribed, phoneNumber, password },
       userValidate.registerValSchema
     );
     if (validate.valid)
       return res.status(422).send({ message: validate.message });
 
+    email = email.toLowerCase();
     const existEmail = await userService.existEmailAsync(email);
     if (existEmail)
       return res.status(409).send({ message: "User already exist!" });
@@ -36,6 +38,12 @@ exports.register = async (req, res) => {
       createdAt: new Date(),
       isActive: false,
     });
+
+    if (isSubscribed) {
+      const existSubscriber = await subscribedService.existEmailAsync(email);
+      if (!existSubscriber) await subscribedService.createAsync({ email });
+    }
+
     const token = await tokenService.createAsync({ email }, user._id);
 
     await userService.findByIdAndUpdateAsync(user._id, {

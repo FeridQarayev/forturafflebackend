@@ -6,6 +6,7 @@ exports.registerValSchema = Joi.object({
   fullName: Joi.string().required(),
   email: Joi.string().email().required(),
   phoneNumber: Joi.string().regex(phonePattern).required(),
+  isSubscribed: Joi.boolean().required(),
   password: Joi.string().required(),
 });
 
